@@ -1,30 +1,31 @@
-/*var fs = require('fs')
+const express = require("express")
+const app = express()
+const port = 8080||process.env.PORT
 
-var readFileText = function(name,callback){
-	process.nextTick(function(){
-		var content = fs.readFileSync(name)
-		callback(content.toString())
-	})
-}
+const votes = {}
 
-readFileText('./package.json', function(content){
-	console.log(content)
-})
-console.log('hola mundo')*/
+app.use(express.static('public'))
 
-
-var fs = require('fs')
-
-var readFileAsinc = function(name, callback){
-	process.nextTick(function(){
-		var content = fs.readFileSync(name)
-		console.log(content.toString())		
-	})
-}
-
-readFileAsinc('./package.json', function(content){
-	console.log(content)
+app.get('/votes', (req,res)=>{
+	res.status(200).json(votes)
 })
 
-console.log('hola platzi')
-console.log('/////////////////////////')
+app.post('/votes/:id', (req,res) => {
+	var id = req.params.id
+
+	if (votes[id] === undefined){
+		votes[id] = 1
+	}else{
+		votes[id] = votes[id] +1		
+	}
+
+	res.status(200).json({ votes : votes[id] })
+})
+
+app.listen(port, (err) => {
+	if (err){
+		console.log(`Ha ocurrido el siguiente error: ${err}`)
+	};
+
+	console.log(`servidor escuchando en puerto : ${port}`)
+})
